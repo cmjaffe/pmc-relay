@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Positive Money Fitness Planner™</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream: #F2F7FA;
+    --warm-white: #F7FBFD;
+    --gold: #efa515;
+    --gold-light: #f7d47a;
+    --gold-dark: #c4880f;
+    --sage: #438b42;
+    --sage-light: #90c48f;
+    --blush: #3e7090;
+    --blush-light: #8cb8cf;
+    --deep: #1a3040;
+    --mid: #2e5a72;
+    --text: #1e3a28;
+    --text-light: #4a7060;
+    --border: #cde2ec;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(239,165,21,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(67,139,66,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(62,112,144,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 50px 20px 36px;
+    position: relative;
+  }
+
+  .brand-line {
+    font-family: 'Lato', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(38px, 5vw, 58px);
+    font-weight: 400;
+    color: var(--deep);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--gold-dark);
+  }
+
+  .header-sub {
+    font-size: 20px;
+    color: var(--text-light);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto;
+  }
+
+  /* Step progress */
+  .steps-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 36px;
+    padding: 0 30px;
+  }
+
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    min-width: 90px;
+  }
+
+  .step-item:not(.active):not(.done) { opacity: 0.4; }
+
+  .step-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--warm-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-light);
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .step-item.active .step-circle {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(201,169,110,0.18);
+  }
+
+  .step-item.done .step-circle {
+    border-color: var(--sage);
+    background: var(--sage);
+    color: white;
+  }
+
+  .step-label {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    text-align: center;
+    max-width: 100px;
+  }
+
+  .step-item.active .step-label { color: var(--gold-dark); }
+  .step-item.done .step-label { color: var(--sage); }
+
+  .step-connector {
+    width: 80px;
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 26px;
+    flex-shrink: 0;
+  }
+
+  /* Main card */
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 44px;
+    box-shadow: 0 4px 30px rgba(44,36,22,0.06);
+    margin-bottom: 20px;
+    animation: fadeSlideIn 0.4s ease;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-eyebrow {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 10px;
+  }
+
+  .card h2 {
+    font-family: 'Lato', sans-serif;
+    font-size: clamp(28px, 3vw, 36px);
+    font-weight: 400;
+    color: var(--deep);
+    margin-bottom: 10px;
+    line-height: 1.25;
+  }
+
+  .card-intro {
+    font-size: 20px;
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    font-weight: 400;
+  }
+
+  /* Chat area */
+  .chat-area {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--cream);
+    min-height: 320px;
+    max-height: 460px;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-track { background: transparent; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .msg {
+    display: flex;
+    gap: 12px;
+    animation: msgIn 0.3s ease;
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.user { flex-direction: row-reverse; }
+
+  .msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .msg.coach .msg-avatar {
+    background: linear-gradient(135deg, #f7d47a, #efa515);
+    color: white;
+  }
+
+  .msg.user .msg-avatar {
+    background: linear-gradient(135deg, #8cb8cf, #3e7090);
+    color: white;
+  }
+
+  .msg-bubble {
+    max-width: 82%;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 20px;
+    line-height: 1.8;
+    font-weight: 400;
+  }
+
+  .msg-bubble p {
+    margin: 0 0 12px 0;
+  }
+
+  .msg-bubble p:last-child {
+    margin-bottom: 0;
+  }
+
+  .msg.coach .msg-bubble {
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-top-left-radius: 4px;
+  }
+
+  .msg.user .msg-bubble {
+    background: linear-gradient(135deg, #3e7090, #8cb8cf);
+    color: white;
+    border-top-right-radius: 4px;
+  }
+
+  .msg-bubble strong {
+    font-weight: 500;
+    color: var(--gold-dark);
+  }
+
+  .msg.user .msg-bubble strong { color: white; }
+
+  .msg-bubble ul {
+    margin: 8px 0 4px 16px;
+  }
+
+  .msg-bubble li {
+    margin-bottom: 4px;
+  }
+
+  /* Typing indicator */
+  .typing-dots {
+    display: flex;
+    gap: 4px;
+    padding: 6px 0;
+    align-items: center;
+  }
+
+  .typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-light);
+    animation: dot 1.2s infinite;
+  }
+
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dot {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  /* Input row */
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .input-row textarea {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text);
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    min-height: 48px;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+
+  .input-row textarea:focus { border-color: var(--gold); }
+  .input-row textarea::placeholder { color: var(--text-light); }
+
+  .send-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3e7090, #2e5a72);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(62,112,144,0.35);
+  }
+
+  .send-btn:active { transform: translateY(0); }
+
+  .send-btn svg { width: 18px; height: 18px; fill: white; }
+
+  /* Quick prompts */
+  .quick-prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .quick-btn {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: white;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 20px;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+  }
+
+  .quick-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+    background: rgba(201,169,110,0.06);
+  }
+
+  /* Plan output card */
+  .plan-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-top: 16px;
+    animation: fadeSlideIn 0.4s ease;
+  }
+
+  .plan-card h3 {
+    font-family: 'Lato', sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--deep);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .plan-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .plan-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .plan-section-title {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 10px;
+  }
+
+  .plan-section p {
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 400;
+    cursor: pointer;
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .check-item.checked .check-box {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+
+  .check-item.checked span { text-decoration: line-through; opacity: 0.5; }
+
+  .check-box svg { width: 10px; height: 10px; fill: white; display: none; }
+  .check-item.checked .check-box svg { display: block; }
+
+  /* Values table */
+  .values-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 20px;
+  }
+
+  .values-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .values-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(232,223,208,0.5);
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .values-table tr:last-child td { border-bottom: none; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .tag.earn { background: rgba(239,165,21,0.15); color: #c4880f; }
+  .tag.spend { background: rgba(62,112,144,0.15); color: #2e5a72; }
+  .tag.save { background: rgba(67,139,66,0.15); color: #2e6b2d; }
+  .tag.secure { background: rgba(62,112,144,0.1); color: #3e7090; }
+
+  /* Chart */
+  .alignment-chart {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .align-bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .align-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    color: var(--text-light);
+    font-weight: 400;
+  }
+
+  .align-bar-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .align-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  /* Actions */
+  .action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 13px 24px;
+    border-radius: 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #efa515, #c4880f);
+    color: white;
+    box-shadow: 0 2px 10px rgba(239,165,21,0.25);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 4px 16px rgba(239,165,21,0.35);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--mid);
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding-top: 20px;
+    font-size: 18px;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+  }
+
+  footer strong { color: var(--gold-dark); font-weight: 500; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .card { padding: 20px 14px; }
+    .steps-nav { gap: 0; }
+    .step-connector { width: 20px; }
+    .plan-card { padding: 16px 12px; }
+    .alignment-chart { grid-template-columns: 1fr; }
+    body { margin: 0; padding: 0; }
+    .app { padding: 0 10px 60px; }
+    .values-table { font-size: 15px; }
+    .values-table th, .values-table td { padding: 8px 6px; }
+    header { padding: 30px 10px 24px; }
+    header h1 { font-size: clamp(28px, 7vw, 42px); }
+    .msg-bubble { font-size: 17px; }
+    .chat-area { min-height: 300px; }
+  }
+
+  /* Loading shimmer */
+  .shimmer {
+    background: linear-gradient(90deg, var(--border) 25%, var(--gold-light) 50%, var(--border) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    height: 12px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAEdmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDIyLTA0LTE4PC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPjIwOTdiMzJkLTg3OGQtNGJlYS1hMWI3LTViYTE5ZGIwYjY3NzwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6ZGM9J2h0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvJz4KICA8ZGM6dGl0bGU+CiAgIDxyZGY6QWx0PgogICAgPHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz5QTUMgTG9nb18yMDB4MjAwPC9yZGY6bGk+CiAgIDwvcmRmOkFsdD4KICA8L2RjOnRpdGxlPgogPC9yZGY6RGVzY3JpcHRpb24+CgogPHJkZjpEZXNjcmlwdGlvbiBy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" alt="Positive Money Club" style="width:90px;height:90px;margin-bottom:10px;"/>
+    <h1>Positive Money <em>Fitness</em> Planner™</h1>
+    <div class="divider"></div>
+    <p class="header-sub">A values-based journey to align your money life with your purpose, legacy, and deepest truths.</p>
+  </header>
+
+  <!-- Step Nav -->
+  <div class="steps-nav">
+    <div class="step-item active" id="nav-0" onclick="goToStep(0)">
+      <div class="step-circle">✦</div>
+      <div class="step-label">Scorecard</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="nav-1" onclick="goToStep(1)">
+      <div class="step-circle">1</div>
+      <div class="step-label">Values & Purpose</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="nav-2" onclick="goToStep(2)">
+      <div class="step-circle">2</div>
+      <div class="step-label">Money Story</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="nav-3" onclick="goToStep(3)">
+      <div class="step-circle">3</div>
+      <div class="step-label">Fitness Plan</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item" id="nav-4" onclick="goToStep(4)">
+      <div class="step-circle">4</div>
+      <div class="step-label">Calendar</div>
+    </div>
+  </div>
+
+  <!-- Main Chat Card -->
+  <div class="card">
+    <div class="card-eyebrow" id="step-eyebrow">Start Here</div>
+    <h2 id="step-title">Take Your Positive Money Fitness Scorecard™</h2>
+    <p class="card-intro" id="step-intro">Before we begin building your plan, discover where you stand across the four dimensions of your financial life — Earning, Spending & Giving, Saving & Investing, and Security. It takes just 3 minutes and is completely free.</p>
+
+    <div class="quick-prompts" id="quick-prompts"></div>
+
+    <!-- Scorecard Panel (shown on step 0) -->
+    <div id="scorecard-panel" style="display:block;">
+
+      <!-- Phase A: Take the Scorecard CTA -->
+      <div id="phase-a" style="display:block;">
+        <div style="background:linear-gradient(135deg,rgba(62,112,144,0.07),rgba(67,139,66,0.07));border:1px solid var(--border);border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:16px;">
+          <div style="font-size:34px;margin-bottom:10px;">📊</div>
+          <h3 style="font-family:'Lato',sans-serif;font-size:28px;font-weight:700;color:var(--deep);margin-bottom:8px;">First, Take Your Positive Money Fitness Scorecard™</h3>
+          <p style="font-size:20px;color:var(--text-light);line-height:1.8;margin-bottom:18px;font-weight:400;">Like a good fitness plan from a personal trainer, this plan starts with where you are today. Take the free Scorecard to assess where you stand across the four dimensions of your financial life, then enter your results below to build a plan that's truly personalized.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px;">
+            <span class="tag earn" style="padding:5px 12px;font-size:15px;">💰 Earning</span>
+            <span class="tag spend" style="padding:5px 12px;font-size:15px;">🎁 Spending & Giving</span>
+            <span class="tag save" style="padding:5px 12px;font-size:15px;">🌱 Saving & Investing</span>
+            <span class="tag secure" style="padding:5px 12px;font-size:15px;">🔒 Security</span>
+          </div>
+          <a href="https://positivemoney.scoreapp.com/" target="_blank" class="btn btn-primary" style="display:inline-block;text-decoration:none;padding:13px 28px;font-size:17px;font-weight:700;letter-spacing:0.04em;">Take the Free Scorecard →</a>
+          <p style="font-size:15px;color:var(--text-light);margin-top:10px;">Takes just 3 minutes · Completely free · Instant results</p>
+        </div>
+        <div style="text-align:center;">
+          <button onclick="showPhaseB()" style="background:none;border:none;font-family:'Source Sans 3',sans-serif;font-size:20px;color:var(--blush);cursor:pointer;text-decoration:underline;padding:4px;font-weight:600;">I already have my score — enter it now</button>
+        </div>
+      </div>
+
+      <!-- Phase B: Enter Your Scores -->
+      <div id="phase-b" style="display:none;">
+        <div style="background:linear-gradient(135deg,rgba(239,165,21,0.06),rgba(62,112,144,0.06));border:1px solid var(--border);border-radius:12px;padding:28px 28px 24px;">
+
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#efa515,#c4880f);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold-dark);">Financial Fitness Intake</div>
+              <div style="font-size:21px;font-weight:700;color:var(--deep);">Enter Your Scorecard Results</div>
+            </div>
+          </div>
+
+          <!-- STEP 1: Overall Score + Focus Area -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:14px;">Step 1 — Your Overall Score &amp; Focus</div>
+
+            <label style="display:block;font-size:15px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:8px;">Overall Positive Money Fitness Score™</label>
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+              <input type="number" id="score-overall" min="0" max="100" placeholder="e.g. 68"
+                style="width:100px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:22px;font-weight:700;color:var(--deep);text-align:center;outline:none;background:white;"
+                oninput="updateOverallBar(this.value)"
+                onfocus="this.style.borderColor='#efa515'" onblur="this.style.borderColor='var(--border)'"/>
+              <div style="flex:1;">
+                <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">
+                  <div id="bar-overall" style="height:100%;width:0%;background:linear-gradient(90deg,#efa515,#c4880f);border-radius:4px;transition:width 0.4s ease;"></div>
+                </div>
+                <div style="font-size:17px;color:var(--text-light);margin-top:4px;" id="label-overall">Enter your score above</div>
+              </div>
+            </div>
+
+            <label style="display:block;font-size:15px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-light);margin-bottom:10px;">What area do you most want to focus on?</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;" id="focus-buttons">
+              <button onclick="selectFocus(this,'Earning')" class="focus-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid #efa515;background:white;font-family:'Source Sans 3',sans-serif;font-size:20px;font-weight:600;color:#c4880f;cursor:pointer;transition:all 0.2s;">💰 Earning</button>
+              <button onclick="selectFocus(this,'Spending & Giving')" class="focus-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid #3e7090;background:white;font-family:'Source Sans 3',sans-serif;font-size:20px;font-weight:600;color:#2e5a72;cursor:pointer;transition:all 0.2s;">🎁 Spending & Giving</button>
+              <button onclick="selectFocus(this,'Saving & Investing')" class="focus-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid #438b42;background:white;font-family:'Source Sans 3',sans-serif;font-size:20px;font-weight:600;color:#2e6b2d;cursor:pointer;transition:all 0.2s;">🌱 Saving &amp; Investing</button>
+              <button onclick="selectFocus(this,'Security')" class="focus-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid #3e7090;background:white;font-family:'Source Sans 3',sans-serif;font-size:20px;font-weight:600;color:#2e5a72;cursor:pointer;transition:all 0.2s;">🔒 Security</button>
+              <button onclick="selectFocus(this,'All Areas')" class="focus-btn" style="padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:white;font-family:'Source Sans 3',sans-serif;font-size:20px;font-weight:600;color:var(--mid);cursor:pointer;transition:all 0.2s;">🎯 All Areas</button>
+            </div>
+            <div id="focus-error" style="display:none;font-size:16px;color:#c0392b;margin-top:8px;">Please select a focus area to continue.</div>
+          </div>
+
+          <!-- STEP 2: Focus Score + Goal (appears after focus selected) -->
+          <div style="border-top:1px dashed var(--border);padding-top:20px;display:none;" id="goal-section">
+            <div style="font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:14px;">Step 2 — Your Score &amp; Goal</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+              <div>
+                <label style="display:block;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:8px;">Current Score <span id="focus-score-label" style="color:var(--gold-dark);"></span></label>
+                <input type="number" id="score-focus-dim" min="0" max="100" placeholder="0–100"
+                  style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:22px;font-weight:700;color:var(--deep);text-align:center;outline:none;background:white;"
+                  onfocus="this.style.borderColor='#efa515'" onblur="this.style.borderColor='var(--border)'"/>
+              </div>
+              <div>
+                <label style="display:block;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:8px;">I want to reach</label>
+                <input type="number" id="score-goal" min="0" max="100" placeholder="0–100"
+                  style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:22px;font-weight:700;color:var(--deep);text-align:center;outline:none;background:white;"
+                  onfocus="this.style.borderColor='#438b42'" onblur="this.style.borderColor='var(--border)'"/>
+              </div>
+            </div>
+
+            <div>
+              <label style="display:block;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:8px;">By when?</label>
+              <input type="text" id="score-goal-date" placeholder="e.g. December 2025, or 6 months from now"
+                style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:20px;color:var(--deep);outline:none;background:white;box-sizing:border-box;"
+                onfocus="this.style.borderColor='#438b42'" onblur="this.style.borderColor='var(--border)'"/>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:20px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <button onclick="advanceStep()" class="btn btn-primary" style="width:100%;max-width:400px;padding:16px 28px;font-size:20px;font-weight:700;letter-spacing:0.03em;">I'm Ready — Let's Begin My Plan →</button>
+          <button onclick="showPhaseA()" style="background:none;border:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--text-light);cursor:pointer;text-decoration:underline;">← Back to Scorecard</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chat-area" id="chat-area" style="display:none;"></div>
+
+    <div class="input-row" style="display:none;">
+      <textarea id="user-input" placeholder="Share your thoughts or ask anything…" rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+      <button class="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Plan Output (hidden until Step 3) -->
+  <div id="plan-output" style="display:none;"></div>
+
+  <!-- Saboteur CTA (shown after plan is generated) -->
+  <div id="saboteur-cta" style="display:none;" class="plan-card" style="text-align:center;">
+    <div style="text-align:center;padding:8px 0 4px;">
+      <div class="plan-section-title" style="text-align:center;">Ready to Go Deeper?</div>
+      <h3 style="font-family:'Source Sans 3',sans-serif;font-size:28px;font-weight:700;color:var(--deep);margin-bottom:10px;">3 Ways to Slay Your Money Saboteur™</h3>
+      <p style="font-size:20px;color:var(--text-light);line-height:1.8;margin-bottom:20px;font-weight:400;max-width:540px;margin-left:auto;margin-right:auto;">We all have patterns that hold us back financially. Discover your top Money Saboteur and get three powerful, practical strategies to overcome it — so you can move forward with confidence and clarity.</p>
+      <a href="https://positivemoneyclubgym.xperiencify.io/saboteurs/order/" target="_blank" class="btn btn-primary" style="display:inline-block;text-decoration:none;padding:14px 32px;font-size:20px;font-weight:700;letter-spacing:0.04em;">Slay My Money Saboteur →</a>
+    </div>
+  </div>
+
+  <div class="action-row" id="action-row" style="justify-content:center;">
+    <button class="btn btn-outline" onclick="resetSession()">Start Over</button>
+    <button class="btn btn-primary" id="next-btn" onclick="advanceStep()">I've Entered My Scores — Let's Begin →</button>
+  </div>
+
+  <footer>
+    <p>Positive Money Fitness Planner™ · My Positive Money Club · For informational purposes only, not financial advice.</p>
+  </footer>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are the Positive Money Fitness Planner™ — a warm, wise coach grounded in the Positive Money principles and practices from "Positive Money: 7 Principles for Living a Rich Life."
+
+YOUR COACHING PHILOSOPHY:
+Positive Money is a philosophy for living in relationship with money that feels positive and leads to favorable results. You help users move from an adversarial, ambivalent, or apathetic relationship with money toward an ABUNDANT one — driven by gratitude, generosity, and grace.
+
+The core belief: You can live a rich life no matter what's in your bank account when your financial decisions are grounded in your values and guided by love rather than fear.
+
+THE 7 PRINCIPLES OF POSITIVE MONEY (weave these naturally throughout coaching — do not lecture, but invite exploration):
+1. A CHOICE — Choosing Positive Money means choosing a relationship with money driven by love rather than fear. The user has the power to choose how they show up for money, moment by moment.
+2. GENERATIONAL — Our money beliefs and behaviors are inherited and passed forward. Awareness of what we carry from the past makes us more intentional today.
+3. SERVES A HIGHER GOOD — Financial decisions grounded in purpose and the needs of others create meaning and direction. Ask: what higher good does this serve?
+4. ALIGNS HEAD, HEART & HABIT — When our beliefs (head), emotions (heart), and behaviors (habit) around money are aligned, we experience ease and flow. Misalignment signals an opportunity to course-correct.
+5. AN ACT OF GIVING & RECEIVING — When we give and receive equally, we experience connection and flow. Most people give more easily than they receive — both matter.
+6. CAUSES NO HARM — This principle asks us to notice when our money choices cause harm to ourselves or others — through self-judgment, overspending, underearning, or avoidance — and to choose differently.
+7. A PRACTICE — Positive Money is a daily practice, applied with mindfulness and compassion. Progress over perfection. Keep returning to what matters most.
+
+THE 3 P'S FRAMEWORK:
+- PRINCIPLES: The 7 Principles are the guiding philosophy
+- PROCESS: Pause → Notice → Choose. When facing a money challenge, pause (at least 6 seconds), notice what's happening in head/heart/habit, then choose a principle that resonates and ask a generative question
+- PRACTICE: Explore the three dimensions — Head (money mindset/beliefs), Heart (emotions and feelings), Habit (recurring patterns and behaviors)
+
+KEY CONCEPTS TO DRAW FROM:
+- Money relationships range from Adversarial → Ambivalent → Apathetic → ABUNDANT (the goal)
+- Money Saboteurs: The Judge (universal), plus Hyper-Achiever, Hyper-Rational, Stickler, Pleaser, Victim, Controller, Restless, Hyper-Vigilant, Avoider (from Positive Intelligence®)
+- The "space between stimulus and response" (Viktor Frankl) — our power to choose lives there
+- Positive/generative questions start with How, What, Where — not Why (which leads to self-critique)
+- "What does love look like here?" is a core Positive Money question
+- Money stories can be rewritten: separate FACT from FICTION, then reframe
+- Four dimensions of financial life: Earning, Spending & Giving, Saving & Investing, Security
+- Mental fitness supports our ability to make wise money choices
+- A rich life is not defined by what's in your bank account
+
+PRACTICES TO REFERENCE (when appropriate):
+- Money Dates: scheduled time to focus on a money question, alone or with others
+- Money Dialogues: a conversation with money itself — what does it say to you?
+- Money Maps: visual representation of where money flows and why
+- Money Meditations: mindful moments with a money mantra or affirmation
+- Money Stories: surfacing and rewriting the tales we tell ourselves about money
+- Money Boundaries: setting clear internal and external limits around money
+
+YOUR COACHING APPROACH:
+- Warm, non-judgmental, mentor-like, compassionate, curious, and insightful
+- Never give specific financial advice (you are a money mindset and relationship coach, not a financial advisor)
+- Ask one powerful generative question at a time — don't overwhelm
+- Use reflection: 📝 *Reflection: [prompt]* for deeper journaling moments
+- Gently name saboteurs when you see them at work, without shaming
+- Celebrate awareness and small shifts — they are the practice
+- When a user seems stuck or resistant, come from curiosity, not prescription
+- If a user asks to explore the 7 Principles, walk them through one at a time with a question to reflect on
+- Responses: 2-4 short paragraphs max. Conversational, not clinical.
+
+ALWAYS remember: This is a plan driven by deeper purpose and values — as much about the user's *relationship* with money as it is about the numbers.`;
+
+
+let currentStep = 0;
+let conversationHistory = [];
+let planData = null;
+
+const stepConfig = {
+  0: {
+    eyebrow: "Start Here",
+    title: "Your Financial Fitness Intake",
+    intro: "Our goal today is to create a financial fitness plan that works for you — so that you can lead, live, and leave a legacy you can be proud of.",
+    prompts: [],
+    nextLabel: "I've Entered My Scores — Let's Begin →",
+    systemContext: ""
+  },
+  1: {
+    eyebrow: "Step 1 of 3",
+    title: "Discover Your Values & Purpose",
+    intro: "A rich life begins from the inside out. Let's get clear on what truly matters to you — your values, your purpose, your gifts — before we ever look at the numbers.",
+    prompts: [
+      "What are my core values?",
+      "Help me clarify my life purpose",
+      "What does 'leading my money' mean?",
+      "Explore the 7 Principles with me",
+      "I'm ready to begin"
+    ],
+    nextLabel: "Continue to Money Story →",
+    systemContext: `STEP 1 — VALUES & PURPOSE:
+Help the user explore their core values, life purpose, natural gifts, and the legacy they want to leave. This is the foundation on which everything else is built.
+
+Ground this step in Principle 1 (Choice — choosing love over fear), Principle 3 (Serves a Higher Good — what matters most), and Principle 4 (Head/Heart/Habit alignment).
+
+Key coaching moves:
+- Ask what "leading your money" means to them — invite them to see themselves as the leader of their financial life, not a passenger
+- Explore what a rich life looks and feels like for them beyond bank account numbers
+- Help them name 2-3 core values that will serve as the compass for their plan
+- Introduce the idea that Positive Money is a CHOICE — driven by love, not fear
+- If they ask about the 7 Principles, walk through them one by one with a reflection question for each
+
+Generative questions to draw from:
+- "What does love look like in your relationship with money right now?"
+- "What higher good do you most want your money to serve?"
+- "If your money could speak — what would it say to you, and what would you want to say back?"
+- "What would it mean to lead your financial life with intention and grace?"`
+  },
+  2: {
+    eyebrow: "Step 2 of 3",
+    title: "Uncover Your Money Story",
+    intro: "Our relationship with money is shaped by stories we've carried for years — from childhood, culture, and experience. Let's gently explore yours with curiosity, not judgment.",
+    prompts: [
+      "What beliefs am I carrying about money?",
+      "How did my upbringing shape my money story?",
+      "I feel like I'm not good enough with money",
+      "Money has always felt complicated for me",
+      "Help me reframe a limiting belief"
+    ],
+    nextLabel: "Build My Fitness Plan →",
+    systemContext: `STEP 2 — MONEY STORY:
+Help the user surface the money stories, beliefs, and patterns they carry — and gently reframe them with compassion. This step draws on:
+- Principle 2 (Generational — inherited beliefs from family and culture)
+- Principle 4 (Head/Heart/Habit — identifying misalignments)
+- Principle 6 (Causes No Harm — recognizing self-judgment and harmful patterns)
+
+Key coaching moves:
+- Invite them to listen to the stories they tell themselves: "Is this fact or fiction?"
+- Help them identify which money relationship type resonates: Adversarial, Ambivalent, Apathetic — and what Abundant would feel like
+- Gently name Saboteurs if you hear them at work (Judge, Pleaser, Victim, Avoider, Hyper-Achiever, etc.) — without shame
+- Separate FACT from FICTION in their stories, then invite a reframe
+- Explore the Head (beliefs/mindset), Heart (emotions), and Habit (patterns) dimensions
+
+Money Story reframing approach:
+Before: [the old story]
+Choice: [what Positive Money invites]
+After: [the reframed narrative]
+
+Generative questions to draw from:
+- "Where is your past showing up in a way you find frustrating or limiting?"
+- "What story are you telling yourself — and how much of it is fact versus fiction?"
+- "What would your elder, wiser self say about this chapter of your money story?"
+- "If you could rewrite one money belief you inherited, what would it say?"
+- "What would it feel like to have an abundant relationship with money?"`
+  },
+  3: {
+    eyebrow: "Step 3 of 3",
+    title: "Build Your Money Fitness Plan",
+    intro: "Now we bring it all together — your values, your story, your vision — into a personalized plan that's as much about your relationship with money as it is about the numbers.",
+    prompts: [
+      "Create my full Positive Money Fitness Plan",
+      "What Positive Money principle should I focus on?",
+      "Help me set money intentions for each area",
+      "What does financial wellness look like for me?",
+      "How do I lead my money going forward?"
+    ],
+    nextLabel: "✨ Generate My Plan",
+    systemContext: `STEP 3 — POSITIVE MONEY FITNESS PLAN:
+Help the user co-create a personalized, values-aligned plan that integrates all 7 Principles and covers the four dimensions of financial life: Earning, Spending & Giving, Saving & Investing, and Security.
+
+This plan is grounded in:
+- Their core values and life purpose (from Step 1)
+- Their money story insights and reframes (from Step 2)
+- Their Scorecard scores and chosen focus area (from intake)
+- The 7 Principles as a living compass going forward
+
+Key coaching moves:
+- Help them see themselves as the LEADER of their money — not a victim of circumstances
+- Connect each area of the plan to a specific Positive Money Principle
+- Suggest relevant practices: Money Dates, Money Dialogues, Money Meditations, Money Boundaries
+- Frame the plan as a PRACTICE — not a one-time fix, but a daily commitment
+- Offer the Positive Money process for any challenge: Pause → Notice → Choose
+- Remind them that ease and flow come from Head/Heart/Habit alignment
+
+For each financial dimension, help them define:
+- Their current relationship with that area (Head/Heart/Habit lens)
+- An intention grounded in their values
+- One specific, compassionate action to take
+
+Closing: Affirm that they are choosing Positive Money — choosing love over fear — and that this plan is the beginning of a rich life lived from the inside out.`
+  },
+  4: {
+    eyebrow: "Step 4 of 4",
+    title: "Put Your Plan on the Calendar",
+    intro: "A plan without a timeline is just a wish. Let's map out your week-by-week journey — from where you are now to where you're going — so you know exactly what to do and when.",
+    prompts: [
+      "Generate my week-by-week action plan",
+      "How do I start my first Money Date?",
+      "What should I do in the first week?",
+      "Help me make this feel manageable",
+      "What milestones should I track?"
+    ],
+    nextLabel: "📅 Generate My Calendar Plan",
+    systemContext: `STEP 4 — CALENDAR & WEEK-BY-WEEK ACTION PLAN:
+Help the user turn their Positive Money Fitness Plan into a concrete, week-by-week schedule. Use their goal score, focus area, and goal date from their intake data to create a realistic timeline.
+
+This step is about making the practice real and achievable — not overwhelming.
+
+Key coaching moves:
+- Review their starting score and goal score to estimate how many weeks they have
+- Break the journey into phases: Foundation (weeks 1-4), Deepening (weeks 5-8), Momentum (remaining weeks)
+- Suggest specific weekly practices tied to their plan (Money Dates, check-ins, meditations)
+- Keep actions small, loving, and consistent — this is a practice, not a sprint
+- Remind them that awareness and intention ARE progress, even before numbers change
+
+Frame the calendar warmly: this is not a to-do list, it's a love letter to your future self.`
+  }
+};
+
+// ======================================================
+// RELAY URL — update this after you deploy to Render
+// e.g. "https://pmc-relay.onrender.com/api/chat"
+// ======================================================
+const RELAY_URL = "https://pmc-relay.onrender.com/api/chat";
+
+async function callClaude(messages) {
+  const intakeContext = intakeData
+    ? `\n\nUSER INTAKE DATA (from their Positive Money Fitness Scorecard™):\n- Overall Score: ${intakeData.overall}%\n- Focus Area: ${intakeData.focus}\n- Current Score for Focus Area: ${intakeData.focusDimScore}%\n- Goal Score: ${intakeData.goalScore}%\n- Goal Timeline: ${intakeData.goalDate}\n\nUse this data throughout the session to personalize your coaching. Reference their focus area score and goal prominently — especially when building their plan. Their goal of reaching ${intakeData.goalScore}% by ${intakeData.goalDate} should anchor the plan's actions and intentions.`
+    : "";
+  try {
+    const response = await fetch(RELAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT + "\n\n" + stepConfig[currentStep].systemContext + intakeContext,
+        messages: messages
+      })
+    });
+    const data = await response.json();
+    if (data.error) {
+      console.error("API error:", data.error);
+      return "Connection issue — please check that the API key is configured in Render, then try again.";
+    }
+    return data.content?.map(b => b.text || "").join("") || "I'm here with you. Please share what's on your mind.";
+  } catch (e) {
+    console.error("callClaude error:", e);
+    return "I'm having trouble connecting right now. Please check that the relay server is running and the API key is configured correctly.";
+  }
+}
+
+function formatMessage(text) {
+  // Bold **text**
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // Italic *text*
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // Line breaks
+  text = text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+  return '<p>' + text + '</p>';
+}
+
+function addMessage(role, text, isTyping = false) {
+  const area = document.getElementById('chat-area');
+  const msg = document.createElement('div');
+  msg.className = `msg ${role === 'user' ? 'user' : 'coach'}`;
+  
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = role === 'user' ? 'You' : 'PM';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+
+  if (isTyping) {
+    bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+    msg.id = 'typing-msg';
+  } else {
+    bubble.innerHTML = formatMessage(text);
+  }
+
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  area.appendChild(msg);
+  area.scrollTop = area.scrollHeight;
+  return msg;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-msg');
+  if (el) el.remove();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  addMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+
+  addMessage('coach', '', true);
+
+  try {
+    const reply = await callClaude(conversationHistory);
+    removeTyping();
+    addMessage('coach', reply);
+    conversationHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    removeTyping();
+    addMessage('coach', "I'm here with you. There was a brief connection issue — please try sharing again.");
+  }
+}
+
+function sendQuick(btn) {
+  document.getElementById('user-input').value = btn.textContent;
+  sendMessage();
+}
+
+function goToStep(step) {
+  if (step > currentStep + 1) return; // can't skip ahead
+  currentStep = step;
+  updateStepUI();
+  if (step === 1 && conversationHistory.length === 0) {
+    startChatSession();
+  }
+}
+
+function advanceStep() {
+  if (currentStep === 0) {
+    // Validate that scores have been entered
+    if (!validateIntake()) return;
+    // Move from Scorecard to Step 1
+    currentStep = 1;
+    updateStepUI();
+    if (conversationHistory.length === 0) startChatSession();
+  } else if (currentStep < 4) {
+    currentStep++;
+    updateStepUI();
+    const transitions = {
+      2: "I'm ready to explore my money story.",
+      3: "Let's build my Positive Money Fitness Plan now.",
+      4: "I'm ready to map out my week-by-week action plan."
+    };
+    if (transitions[currentStep]) {
+      setTimeout(() => {
+        document.getElementById('user-input').value = transitions[currentStep];
+        sendMessage();
+      }, 300);
+    }
+  } else if (currentStep === 3) {
+    generatePlan();
+  } else {
+    generateCalendar();
+  }
+}
+
+function updateStepUI() {
+  const cfg = stepConfig[currentStep];
+  document.getElementById('step-eyebrow').textContent = cfg.eyebrow;
+  document.getElementById('step-title').textContent = cfg.title;
+  document.getElementById('step-intro').textContent = cfg.intro;
+  document.getElementById('next-btn').textContent = cfg.nextLabel;
+
+  const qp = document.getElementById('quick-prompts');
+  qp.innerHTML = cfg.prompts.map(p => `<button class="quick-btn" onclick="sendQuick(this)">${p}</button>`).join('');
+
+  // Show/hide scorecard panel vs chat area
+  const chatArea = document.getElementById('chat-area');
+  const inputRow = document.querySelector('.input-row');
+  const scorecardPanel = document.getElementById('scorecard-panel');
+  if (currentStep === 0) {
+    if (scorecardPanel) scorecardPanel.style.display = 'block';
+    chatArea.style.display = 'none';
+    inputRow.style.display = 'none';
+  } else {
+    if (scorecardPanel) scorecardPanel.style.display = 'none';
+    chatArea.style.display = 'flex';
+    inputRow.style.display = 'flex';
+  }
+
+  // Update nav for all 5 steps (0-4)
+  for (let i = 0; i <= 4; i++) {
+    const nav = document.getElementById(`nav-${i}`);
+    if (!nav) continue;
+    nav.classList.remove('active', 'done');
+    if (i < currentStep) nav.classList.add('done');
+    else if (i === currentStep) nav.classList.add('active');
+  }
+
+  // Update step circle content for done steps (1-4 get checkmarks, 0 keeps ✦ or gets checkmark)
+  for (let i = 1; i < currentStep; i++) {
+    const circle = document.querySelector(`#nav-${i} .step-circle`);
+    if (circle) circle.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+  }
+  if (currentStep > 0) {
+    const sc0 = document.querySelector(`#nav-0 .step-circle`);
+    if (sc0) sc0.innerHTML = `<svg viewBox="0 0 24 24" width="14" height="14" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+  }
+
+  if (currentStep === 3 || currentStep === 4) {
+    document.getElementById('next-btn').style.background = 'linear-gradient(135deg, #efa515, #438b42)';
+  } else {
+    document.getElementById('next-btn').style.background = '';
+    document.getElementById('next-btn').disabled = false;
+  }
+}
+
+async function generatePlan() {
+  const btn = document.getElementById('next-btn');
+  btn.textContent = '⏳ Crafting your plan…';
+  btn.disabled = true;
+
+  // Ask Claude to generate a structured plan
+  const planPrompt = `Based on our entire conversation, please create a personalized Positive Money Fitness Plan for this person. This plan should be deeply grounded in the 7 Principles of Positive Money and the Head/Heart/Habit framework.
+
+Format it as a JSON object with these exact fields:
+{
+  "name": "personalized plan title",
+  "purpose_statement": "1-2 sentence personal purpose statement grounded in their values and higher good",
+  "core_values": ["value1", "value2", "value3"],
+  "money_story_insight": "key insight from their money story — what they're releasing",
+  "belief_reframe": "one limiting belief reframed as a Positive Money choice (Before → Choice → After format)",
+  "guiding_principle": "the Positive Money principle that feels most alive for them right now (name it and explain briefly why)",
+  "earning": {"intention": "values-aligned intention", "action": "one compassionate action", "principle": "which of the 7 principles guides this area"},
+  "spending_giving": {"intention": "values-aligned intention", "action": "one compassionate action", "principle": "which of the 7 principles guides this area"},
+  "saving_investing": {"intention": "values-aligned intention", "action": "one compassionate action", "principle": "which of the 7 principles guides this area"},
+  "security": {"intention": "values-aligned intention", "action": "one compassionate action", "principle": "which of the 7 principles guides this area"},
+  "practice_recommendation": "one specific Positive Money practice recommended for them (Money Date, Money Dialogue, Money Meditation, Money Map, or Money Boundaries) and why",
+  "checklist": ["Positive Money action 1", "action 2", "action 3", "action 4", "action 5"],
+  "alignment_scores": {"earning": 70, "spending_giving": 60, "saving_investing": 55, "security": 65},
+  "goal_commitment": "a one-sentence statement of their specific goal — what score they want to reach, in which area, and by when",
+  "closing_affirmation": "a warm, empowering closing message that reminds them they are choosing Positive Money — love over fear — and this is a practice, not perfection"
+}
+Respond ONLY with valid JSON, no other text.`;
+
+  try {
+    const msgs = [...conversationHistory, { role: 'user', content: planPrompt }];
+    const response = await fetch(RELAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: msgs
+      })
+    });
+    const data = await response.json();
+    let raw = data.content?.map(b => b.text || "").join("") || "{}";
+    raw = raw.replace(/```json|```/g, "").trim();
+    planData = JSON.parse(raw);
+    renderPlan(planData);
+    addMessage('coach', planData.closing_affirmation || "Your plan is ready. This is just the beginning of your journey. 🌿");
+  } catch (e) {
+    addMessage('coach', "Your plan is taking shape! It looks like there was a brief hiccup generating the full visual — please continue our conversation and I'll help you capture your plan.");
+  }
+
+  document.getElementById('saboteur-cta').style.display = 'block';
+  btn.textContent = '✓ Plan Created';
+  btn.style.background = 'linear-gradient(135deg, #438b42, #2e6b2d)';
+  btn.disabled = false;
+}
+
+function renderPlan(p) {
+  const out = document.getElementById('plan-output');
+  out.style.display = 'block';
+
+  const colors = {
+    earning: '#efa515',
+    spending_giving: '#3e7090',
+    saving_investing: '#438b42',
+    security: '#2e5a72'
+  };
+
+  const scores = p.alignment_scores || { earning: 68, spending_giving: 55, saving_investing: 60, security: 72 };
+
+  out.innerHTML = `
+    <div class="plan-card">
+      <h3>✨ ${p.name || "Your Positive Money Fitness Plan™"}</h3>
+
+      <div class="plan-section">
+        <div class="plan-section-title">Your Purpose Statement</div>
+        <p style="font-style:italic;font-family:'Source Sans 3',sans-serif;font-size:21px;font-weight:400;color:var(--deep);">"${p.purpose_statement || ""}"</p>
+      </div>
+
+      <div class="plan-section">
+        <div class="plan-section-title">Core Values</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+          ${(p.core_values || []).map(v => `<span class="tag earn">${v}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="plan-section">
+        <div class="plan-section-title">Money Story Insight</div>
+        <p>${p.money_story_insight || ""}</p>
+        ${p.belief_reframe ? `<p style="margin-top:10px;padding:12px 16px;background:rgba(67,139,66,0.08);border-left:3px solid #438b42;border-radius:0 6px 6px 0;font-size:17px;color:var(--sage);">💚 <em>${p.belief_reframe}</em></p>` : ''}
+      </div>
+
+      ${p.guiding_principle ? `
+      <div class="plan-section">
+        <div class="plan-section-title">Your Guiding Principle</div>
+        <p style="padding:12px 16px;background:rgba(239,165,21,0.08);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;font-size:20px;color:var(--deep);">✨ ${p.guiding_principle}</p>
+      </div>` : ''}
+
+      <div class="plan-section">
+        <div class="plan-section-title">Your Four Money Areas</div>
+        <table class="values-table">
+          <thead><tr><th>Area</th><th>Intention</th><th>Next Action</th></tr></thead>
+          <tbody>
+            ${['earning','spending_giving','saving_investing','security'].map(k => {
+              const area = p[k] || {};
+              const labels = { earning: 'Earning', spending_giving: 'Spending & Giving', saving_investing: 'Saving & Investing', security: 'Security' };
+              const tagClass = k === 'spending_giving' ? 'spend' : k === 'saving_investing' ? 'save' : k;
+              const principleNote = area.principle ? `<div style="font-size:15px;color:var(--mid);margin-top:4px;font-style:italic;">🧭 ${area.principle}</div>` : '';
+              return `<tr>
+                <td><span class="tag ${tagClass}">${labels[k]}</span></td>
+                <td>${area.intention || '—'}</td>
+                <td style="color:var(--mid)">${area.action || '—'}${principleNote}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="plan-section">
+        <div class="plan-section-title">Alignment Snapshot</div>
+        <div class="alignment-chart">
+          ${Object.entries(scores).map(([k, v]) => {
+            const labels = { earning: 'Earning', spending_giving: 'Spending & Giving', saving_investing: 'Saving & Investing', security: 'Security' };
+            return `<div class="align-bar-row">
+              <div class="align-bar-label"><span>${labels[k]}</span><span>${v}%</span></div>
+              <div class="align-bar-track"><div class="align-bar-fill" style="width:${v}%;background:${colors[k]||'var(--gold)'}"></div></div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      ${p.practice_recommendation ? `
+      <div class="plan-section">
+        <div class="plan-section-title">Your Positive Money Practice</div>
+        <p style="padding:12px 16px;background:rgba(62,112,144,0.08);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:20px;color:var(--deep);">🌿 ${p.practice_recommendation}</p>
+      </div>` : ''}
+
+      ${p.goal_commitment ? `
+      <div class="plan-section">
+        <div class="plan-section-title">Your Goal Commitment</div>
+        <p style="padding:14px 18px;background:linear-gradient(135deg,rgba(239,165,21,0.08),rgba(67,139,66,0.08));border-radius:8px;font-size:20px;font-weight:600;color:var(--deep);text-align:center;">🎯 ${p.goal_commitment}</p>
+      </div>` : ''}
+
+      <div class="plan-section">
+        <div class="plan-section-title">Your Action Checklist</div>
+        <div class="checklist" id="checklist">
+          ${(p.checklist || []).map((item, i) => `
+            <div class="check-item" id="check-${i}" onclick="toggleCheck(${i})">
+              <div class="check-box">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              </div>
+              <span>${item}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn btn-outline" style="font-size:16px;" onclick="window.print()">🖨 Save / Print Plan</button>
+        <button class="btn btn-outline" style="font-size:16px;" onclick="copyAll()">📋 Copy Full Summary</button>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Calendar output placeholder ──────────────────────────────────────────────
+let calendarRendered = false;
+
+async function generateCalendar() {
+  const btn = document.getElementById('next-btn');
+  btn.textContent = '⏳ Building your calendar…';
+  btn.disabled = true;
+
+  const d = intakeData || {};
+  const calendarPrompt = `Based on everything we've discussed — including this person's Positive Money Fitness Plan, their focus area (${d.focus || 'their chosen area'}), current score (${d.focusDimScore || '—'}%), goal score (${d.goalScore || '—'}%), and goal date (${d.goalDate || 'their target date'}) — please create a detailed, week-by-week action plan that maps out their journey from where they are now to where they want to be.
+
+Format the response as a JSON object with this structure:
+{
+  "title": "Your Positive Money Journey: Week-by-Week Plan",
+  "overview": "2-3 sentence warm intro about this calendar and what it represents",
+  "phases": [
+    {
+      "phase": "Phase 1: Foundation",
+      "weeks": "Weeks 1–4",
+      "theme": "short theme description",
+      "weeks_detail": [
+        { "week": "Week 1", "focus": "focus area", "actions": ["action 1", "action 2"], "practice": "Money practice for this week", "affirmation": "short weekly affirmation" },
+        { "week": "Week 2", "focus": "focus area", "actions": ["action 1", "action 2"], "practice": "Money practice for this week", "affirmation": "short weekly affirmation" },
+        { "week": "Week 3", "focus": "focus area", "actions": ["action 1", "action 2"], "practice": "Money practice for this week", "affirmation": "short weekly affirmation" },
+        { "week": "Week 4", "focus": "focus area", "actions": ["action 1", "action 2"], "practice": "Money practice for this week", "affirmation": "short weekly affirmation" }
+      ]
+    },
+    {
+      "phase": "Phase 2: Deepening",
+      "weeks": "Weeks 5–8",
+      "theme": "short theme description",
+      "weeks_detail": [ ... 4 more weeks ... ]
+    },
+    {
+      "phase": "Phase 3: Momentum",
+      "weeks": "Weeks 9 onward",
+      "theme": "short theme description",
+      "weeks_detail": [ ... 4 more weeks or until goal date ... ]
+    }
+  ],
+  "milestone_checkin": "A suggested monthly check-in ritual or Money Date format",
+  "closing": "A warm, encouraging closing message for their journey"
+}
+Respond ONLY with valid JSON, no other text.`;
+
+  try {
+    const msgs = [...conversationHistory, { role: 'user', content: calendarPrompt }];
+    const response = await fetch(RELAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        system: SYSTEM_PROMPT,
+        messages: msgs
+      })
+    });
+    const data = await response.json();
+    let raw = data.content?.map(b => b.text || "").join("") || "{}";
+    raw = raw.replace(/```json|```/g, "").trim();
+    const calData = JSON.parse(raw);
+    renderCalendar(calData);
+    addMessage('coach', calData.closing || "Your week-by-week plan is ready! Remember — this is a practice, not a race. Each week you show up for yourself and your money is a victory. 🌿");
+    calendarRendered = true;
+  } catch (e) {
+    addMessage('coach', "I'd love to help you lay out your week-by-week plan! Please ask me 'Generate my week-by-week action plan' and I'll walk you through it step by step.");
+  }
+
+  btn.textContent = '✓ Calendar Created';
+  btn.style.background = 'linear-gradient(135deg, #438b42, #2e6b2d)';
+  btn.disabled = false;
+}
+
+function renderCalendar(cal) {
+  const out = document.getElementById('plan-output');
+  const calDiv = document.createElement('div');
+  calDiv.id = 'calendar-output';
+  calDiv.className = 'plan-card';
+  calDiv.style.marginTop = '24px';
+
+  const phaseColors = ['#3e7090', '#438b42', '#efa515'];
+
+  calDiv.innerHTML = `
+    <h3 style="color:var(--deep);margin-bottom:4px;">📅 ${cal.title || "Your Week-by-Week Journey"}</h3>
+    <p style="font-size:18px;color:var(--text-light);margin-bottom:24px;line-height:1.7;">${cal.overview || ""}</p>
+
+    ${(cal.phases || []).map((phase, pi) => `
+      <div style="margin-bottom:28px;">
+        <div style="background:${phaseColors[pi % 3]};color:white;border-radius:8px 8px 0 0;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;">
+          <strong style="font-size:20px;font-family:'Lato',sans-serif;">${phase.phase}</strong>
+          <span style="font-size:15px;opacity:0.85;">${phase.weeks}</span>
+        </div>
+        <div style="background:rgba(0,0,0,0.02);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:8px 0;">
+          ${(phase.theme ? `<p style="padding:10px 18px 6px;font-size:17px;font-style:italic;color:var(--text-light);">🌿 ${phase.theme}</p>` : '')}
+          ${(phase.weeks_detail || []).map(w => `
+            <div style="padding:14px 18px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <div style="background:${phaseColors[pi % 3]};color:white;border-radius:20px;padding:3px 12px;font-size:14px;font-weight:700;font-family:'Lato',sans-serif;white-space:nowrap;">${w.week}</div>
+                <div style="font-size:17px;font-weight:600;color:var(--deep);">${w.focus || ""}</div>
+              </div>
+              <ul style="margin:0 0 8px 18px;padding:0;">
+                ${(w.actions || []).map(a => `<li style="font-size:17px;color:var(--text-light);margin-bottom:4px;line-height:1.5;">${a}</li>`).join('')}
+              </ul>
+              ${w.practice ? `<div style="font-size:16px;color:var(--teal);margin-bottom:4px;">✨ <em>${w.practice}</em></div>` : ''}
+              ${w.affirmation ? `<div style="font-size:15px;color:var(--gold-dark);font-style:italic;">"${w.affirmation}"</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+
+    ${cal.milestone_checkin ? `
+    <div style="background:rgba(62,112,144,0.07);border-left:4px solid var(--teal);border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:20px;">
+      <div style="font-weight:700;color:var(--teal);margin-bottom:6px;font-size:17px;">📆 Monthly Check-In Ritual</div>
+      <p style="font-size:18px;color:var(--deep);margin:0;line-height:1.6;">${cal.milestone_checkin}</p>
+    </div>` : ''}
+
+    <div style="text-align:center;margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-outline" style="font-size:16px;" onclick="window.print()">🖨 Save / Print Calendar</button>
+      <button class="btn btn-outline" style="font-size:16px;" onclick="copyAll()">📋 Copy Full Summary</button>
+    </div>
+  `;
+
+  out.appendChild(calDiv);
+  calDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function copyAll() {
+  const lines = [];
+
+  // Header
+  lines.push("═══════════════════════════════════════════");
+  lines.push("  POSITIVE MONEY FITNESS PLANNER™");
+  lines.push("  My Positive Money Club");
+  lines.push("═══════════════════════════════════════════");
+  lines.push("");
+
+  // Intake data
+  if (intakeData) {
+    lines.push("── YOUR SCORES ──");
+    lines.push(`Overall Score: ${intakeData.overall}%`);
+    lines.push(`Focus Area: ${intakeData.focus}`);
+    if (intakeData.focusDimScore && intakeData.focusDimScore !== "—") lines.push(`Current ${intakeData.focus} Score: ${intakeData.focusDimScore}%`);
+    if (intakeData.goalScore && intakeData.goalScore !== "—") lines.push(`Goal Score: ${intakeData.goalScore}%`);
+    if (intakeData.goalDate && intakeData.goalDate !== "—") lines.push(`Goal Date: ${intakeData.goalDate}`);
+    lines.push("");
+  }
+
+  // Conversation
+  if (conversationHistory.length > 0) {
+    lines.push("── COACHING CONVERSATION ──");
+    conversationHistory.forEach(msg => {
+      const speaker = msg.role === 'user' ? 'YOU' : 'COACH';
+      lines.push(`\n[${speaker}]`);
+      lines.push(msg.content.replace(/<[^>]+>/g, ''));
+    });
+    lines.push("");
+  }
+
+  // Plan
+  if (planData) {
+    lines.push("══════════════════════════════════════════");
+    lines.push(`  ${planData.name || "YOUR POSITIVE MONEY FITNESS PLAN™"}`);
+    lines.push("══════════════════════════════════════════");
+    lines.push("");
+    if (planData.purpose_statement) { lines.push("PURPOSE STATEMENT"); lines.push(`"${planData.purpose_statement}"`); lines.push(""); }
+    if (planData.core_values?.length) { lines.push("CORE VALUES"); lines.push(planData.core_values.join(" · ")); lines.push(""); }
+    if (planData.money_story_insight) { lines.push("MONEY STORY INSIGHT"); lines.push(planData.money_story_insight); lines.push(""); }
+    if (planData.belief_reframe) { lines.push("BELIEF REFRAME"); lines.push(planData.belief_reframe); lines.push(""); }
+    if (planData.guiding_principle) { lines.push("GUIDING PRINCIPLE"); lines.push(planData.guiding_principle); lines.push(""); }
+    lines.push("YOUR FOUR MONEY AREAS");
+    ['earning','spending_giving','saving_investing','security'].forEach(k => {
+      const area = planData[k] || {};
+      const label = {earning:'Earning',spending_giving:'Spending & Giving',saving_investing:'Saving & Investing',security:'Security'}[k];
+      if (area.intention) lines.push(`  ${label}: ${area.intention} → ${area.action || ''}`);
+    });
+    lines.push("");
+    if (planData.practice_recommendation) { lines.push("POSITIVE MONEY PRACTICE"); lines.push(planData.practice_recommendation); lines.push(""); }
+    if (planData.goal_commitment) { lines.push("GOAL COMMITMENT"); lines.push(planData.goal_commitment); lines.push(""); }
+    if (planData.checklist?.length) {
+      lines.push("ACTION CHECKLIST");
+      planData.checklist.forEach(item => lines.push(`  ☐ ${item}`));
+      lines.push("");
+    }
+  }
+
+  // Calendar (plain text from DOM if rendered)
+  const calDiv = document.getElementById('calendar-output');
+  if (calDiv) {
+    lines.push("══════════════════════════════════════════");
+    lines.push("  YOUR WEEK-BY-WEEK CALENDAR PLAN");
+    lines.push("══════════════════════════════════════════");
+    lines.push(calDiv.innerText.replace(/\n{3,}/g, '\n\n'));
+  }
+
+  lines.push("───────────────────────────────────────────");
+  lines.push("Positive Money Fitness Planner™ · My Positive Money Club");
+  lines.push("For informational purposes only, not financial advice.");
+
+  const text = lines.join("\n");
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btns = document.querySelectorAll('[onclick="copyAll()"]');
+    btns.forEach(b => {
+      const orig = b.textContent;
+      b.textContent = '✓ Copied!';
+      b.style.background = '#438b42';
+      b.style.color = 'white';
+      setTimeout(() => { b.textContent = orig; b.style.background = ''; b.style.color = ''; }, 2500);
+    });
+  }).catch(() => {
+    alert("Copy failed — please select all text manually (Ctrl+A / Cmd+A) and copy.");
+  });
+}
+  document.getElementById(`check-${i}`).classList.toggle('checked');
+}
+
+function resetSession() {
+  if (!confirm("Start a fresh session? Your current conversation will be cleared.")) return;
+  conversationHistory = [];
+  currentStep = 0;
+  intakeData = null;
+  selectedFocus = null;
+  calendarRendered = false;
+  document.getElementById('chat-area').innerHTML = '';
+  document.getElementById('plan-output').style.display = 'none';
+  document.getElementById('plan-output').innerHTML = '';
+  document.getElementById('saboteur-cta').style.display = 'none';
+  // Reset form fields
+  ['score-overall','score-earn','score-spend','score-save','score-secure','score-focus-dim','score-goal','score-goal-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['bar-overall','bar-earn','bar-spend','bar-save','bar-secure'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.width = '0%';
+  });
+  const lbl = document.getElementById('label-overall');
+  if (lbl) lbl.textContent = 'Enter your score above';
+  document.querySelectorAll('.focus-btn').forEach(b => b.style.background = 'white');
+  selectedFocus = null;
+  const gs = document.getElementById('goal-section');
+  if (gs) gs.style.display = 'none';
+  showPhaseA();
+  updateStepUI();
+}
+
+async function startChatSession() {
+  const d = intakeData || {};
+
+  // --- Recognition paragraph: see them, name where they are ---
+  let recognition = "";
+  if (d.overall && d.focus && d.focus !== "All Areas") {
+    const currentScore = d.focusDimScore && d.focusDimScore !== "—" ? d.focusDimScore : null;
+    const goalScore   = d.goalScore && d.goalScore !== "—" ? d.goalScore : null;
+    const goalDate    = d.goalDate && d.goalDate !== "—" ? d.goalDate : null;
+
+    const scoreNote = currentScore
+      ? `Your **${d.focus}** score is currently **${currentScore}%**`
+      : `Your overall Positive Money Fitness Score is **${d.overall}%**`;
+
+    const goalNote = goalScore && goalDate
+      ? `You've set a goal to reach **${goalScore}%** by **${goalDate}** — and we are here for it.`
+      : goalScore
+      ? `You've set a goal to reach **${goalScore}%** — and we are going to help you get there.`
+      : `You've chosen **${d.focus}** as your focus — and that's exactly where we'll direct our energy.`;
+
+    recognition = `${scoreNote}. ${goalNote}\n\nWe see where you are, we know where you want to go, and together we're going to build a plan to get you there — one grounded in your values, your story, and your deepest purpose. *You've got this. And we've got you.*`;
+
+  } else if (d.overall && d.focus === "All Areas") {
+    recognition = `Your overall Positive Money Fitness Score is **${d.overall}%** — and you're here to strengthen all four dimensions of your financial life. That takes courage and vision. *We've got you.*`;
+  } else {
+    recognition = `We're so glad you're here. This is your space to get clear, get grounded, and build a financial plan that's truly yours.`;
+  }
+
+  // --- What to expect ---
+  const whatToExpect = d.focus && d.focus !== "All Areas"
+    ? `Here's how we'll get there together. First, we'll get clear on your **values and purpose** — the foundation everything is built on. Then we'll gently explore your **money story**, because the beliefs we carry shape every financial decision we make. Finally, we'll bring it all together into your personalized **Positive Money Fitness Plan™**, laser-focused on ${d.focus}.`
+    : `Here's how we'll work together. First, we'll get clear on your **values and purpose** — the foundation everything is built on. Then we'll gently explore your **money story**, because the beliefs we carry shape every financial decision we make. Finally, we'll build your personalized **Positive Money Fitness Plan™** across all four dimensions of your financial life.`;
+
+  const opening = `Welcome to the Positive Money Fitness Planner™. 🌿\n\n${recognition}\n\n${whatToExpect}\n\nAt the heart of this work are the **7 Principles of Positive Money** — a framework for leading your money with intention, compassion, and grace. We'll weave these throughout our conversation, and you're welcome to explore any of them along the way.\n\nWe'll move through three steps together:\n**Step 1** — Discover your values & purpose\n**Step 2** — Uncover your money story\n**Step 3** — Build your personalized Positive Money Fitness Plan™\n\nLet's begin. ✨\n\n📝 *To get us started: What does leading your money — truly being in charge of your financial life — look like to you? And where does that feel most alive, or most out of reach, right now?*`;
+
+  addMessage('coach', '', true);
+  await new Promise(r => setTimeout(r, 800));
+  removeTyping();
+  addMessage('coach', opening);
+  conversationHistory.push({ role: 'assistant', content: opening });
+}
+
+// Intake data
+let intakeData = null;
+let selectedFocus = null;
+
+function showPhaseA() {
+  document.getElementById('phase-a').style.display = 'block';
+  document.getElementById('phase-b').style.display = 'none';
+}
+
+function showPhaseB() {
+  document.getElementById('phase-a').style.display = 'none';
+  document.getElementById('phase-b').style.display = 'block';
+  // Show focus section once any score is entered
+  checkShowFocus();
+}
+
+function updateOverallBar(val) {
+  const v = Math.min(100, Math.max(0, parseInt(val) || 0));
+  document.getElementById('bar-overall').style.width = v + '%';
+  const lbl = document.getElementById('label-overall');
+  if (v === 0) { lbl.textContent = 'Enter your score above'; return; }
+  if (v < 40) lbl.textContent = '🌱 Early stage — great place to start';
+  else if (v < 60) lbl.textContent = '🔆 Building momentum';
+  else if (v < 80) lbl.textContent = '✨ Good foundation — room to grow';
+  else lbl.textContent = '🌟 Strong fitness — fine-tuning ahead';
+  checkShowFocus();
+}
+
+function updateBar(id, val, color) {
+  const v = Math.min(100, Math.max(0, parseInt(val) || 0));
+  document.getElementById('bar-' + id).style.width = v + '%';
+  checkShowFocus();
+}
+
+function checkShowFocus() {
+  // Focus buttons are always visible in Step 1 — no action needed
+}
+
+function selectFocus(btn, label) {
+  document.querySelectorAll('.focus-btn').forEach(b => {
+    b.style.background = 'white';
+    b.style.opacity = '0.7';
+    b.style.transform = 'scale(1)';
+  });
+  btn.style.background = 'linear-gradient(135deg, rgba(239,165,21,0.15), rgba(67,139,66,0.12))';
+  btn.style.opacity = '1';
+  btn.style.transform = 'scale(1.04)';
+  selectedFocus = label;
+  document.getElementById('focus-error').style.display = 'none';
+  // Show the goal section (Step 2) and update its label
+  const gs = document.getElementById('goal-section');
+  if (gs) gs.style.display = 'block';
+  const lbl = document.getElementById('focus-score-label');
+  if (lbl) lbl.textContent = label !== 'All Areas' ? '— ' + label : '';
+  // Trigger next button pulse
+  const nb = document.getElementById('next-btn');
+  nb.style.transform = 'scale(1.03)';
+  setTimeout(() => nb.style.transform = '', 300);
+}
+
+function validateIntake() {
+  const overall = document.getElementById('score-overall');
+  // Check if user is on phase-b
+  const phaseB = document.getElementById('phase-b');
+  if (phaseB && phaseB.style.display !== 'none') {
+    if (!overall || !overall.value) {
+      overall.focus();
+      overall.style.borderColor = '#c0392b';
+      setTimeout(() => overall.style.borderColor = 'var(--border)', 2000);
+      return false;
+    }
+    if (!selectedFocus) {
+      const fe = document.getElementById('focus-error');
+      if (fe) fe.style.display = 'block';
+      return false;
+    }
+    // Store intake data
+    const focusDimScore = document.getElementById('score-focus-dim')?.value || '—';
+    const goalScore = document.getElementById('score-goal')?.value || '—';
+    const goalDate = document.getElementById('score-goal-date')?.value || '—';
+    intakeData = {
+      overall: document.getElementById('score-overall').value,
+      earn: selectedFocus === 'Earning' ? focusDimScore : '—',
+      spend: selectedFocus === 'Spending & Giving' ? focusDimScore : '—',
+      save: selectedFocus === 'Saving & Investing' ? focusDimScore : '—',
+      secure: selectedFocus === 'Security' ? focusDimScore : '—',
+      focusDimScore: focusDimScore,
+      goalScore: goalScore,
+      goalDate: goalDate,
+      focus: selectedFocus
+    };
+  }
+  return true;
+}
+
+// Init
+updateStepUI();
+
+// Wake the relay on page load so it's ready when the user sends their first message
+(function wakeRelay() {
+  fetch(RELAY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1,
+      messages: [{ role: "user", content: "wake" }]
+    })
+  }).catch(() => {}); // silently ignore any errors — this is just a warm-up ping
+})();
+</script>
+</body>
+</html>
